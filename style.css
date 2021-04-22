@@ -107,3 +107,21 @@ body {
 /* -------- Form End -------- */
 
 /* -------- Result -------- */
+
+.result {
+  width: 100%;
+  height: 100%;
+  display: inline-grid;
+  justify-items: center;
+  align-items: center;
+
+  padding-top: 10em;
+}
+
+#textarea {
+  width: 80%;
+  height: 5em;
+  font-size: 25px;
+}
+
+/* -------- Result End -------- */
