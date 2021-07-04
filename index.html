@@ -8,10 +8,73 @@
     <script src="index.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <style>
+      .arrow {
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+      }
+      
+      .down {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+      }
+
+      .show {
+        display: inline-block;
+        -webkit-animation: openAnimtion 1s normal forwards ease-in-out;
+        animation: openAnimtion 1s normal forwards ease-in-out;
+        transform-origin: top;
+      }
+
+      #inputs:not(.show)
+      {
+        display: inline-block;
+        -webkit-animation: closeAnimation 1s normal forwards ease-in-out;
+        animation: closeAnimation 1s normal forwards ease-in-out;
+        transform-origin: top;
+      }
+
+      @-webkit-keyframes openAnimtion {
+        from {
+          transform: scaleY(0);
+        }
+        to {
+          transform: scaleY(1);
+        }
+      }
+      @keyframes openAnimtion {
+        from {
+          transform: scaleY(0);
+        }
+        to {
+          transform: scaleY(1);
+        }
+      }
+      @-webkit-keyframes closeAnimation {
+        from {
+          transform: scaleY(1);
+        }
+        to {
+          transform: scaleY(0);
+        }
+      }
+      @keyframes closeAnimation {
+        from {
+          transform: scaleY(1);
+        }
+        to {
+          transform: scaleY(0);
+        }
+      }
+
+      </style>
+
     <title>Sourcefier</title>
 </head>
 <body>
-
+  
   <div class="subscribe-box">
 
     <h2>Welcome to Sourcifier!</h2>
@@ -20,13 +83,27 @@
     <form class="subscribe">
       <input type="text" id="link" placeholder="https://fi.wikipedia.org/wiki/World_Wide_Web" autocomplete="off" required="required"/>
       <button type="button" onclick="CreateSource();">Create source</button>
+
+      <div id="optional">
+        <p>Source contains wrong info? Input values manually <i class="arrow down" onclick="ToggleManualInfo()"></i></p>
+
+        <div id="inputs">
+
+          <input type="text" placeholder="lastName" name="lastName" id="lastName">
+          <input type="text" placeholder="firstName" name="firstName" id="firstName">
+          <input type="text" placeholder="date" name="date" id="date">
+          <input type="text" placeholder="workName" name="workName" id="workName">
+          <input type="text" placeholder="referred" name="referred" id="referred">
+
+        </div>
+      </div>
     </form>
 
   </div>
 
   <div class="result">
 
-    <label for="textarea">Textarea</label>
+    <label for="textarea">Your source text.</label>
     <textarea class="input" id="textarea"></textarea>
 
     <div class="tooltip">

@@ -1,38 +1,37 @@
-function GetPageData(link)
+//#region Source Generation 
+
+function GetPageData(link, callback)
 {
-    var title1 = "";
+    var xmlhttp = window.XMLHttpRequest ?
+        new XMLHttpRequest() :                  // Code for Internet Explorer 7+, Firefox, Chrome, Opera, and Safari
+        new ActiveXObject("Microsoft.XMLHTTP"); // Code for Internet Explorer 6 and Internet Explorer 5
 
-    $.ajax({
-        url: link,
-        success: function(data) {
+    xmlhttp.onreadystatechange = function(data) {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
-            // Create a placeholder element to contain all the incoming data
-            var placeholder = document.createElement("hmtl");
-            placeholder.style.display = "none";
+            var title = "";
+            var author = "";
+            var date = "";
 
-            placeholder.innerHTML = data.responseText;
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(xmlhttp.responseText, "text/html");
+            
+            title = doc.getElementsByTagName("title")[0].innerText;
+            date = doc.lastModified;
 
-            // Get page data
-            var title = $('title', placeholder);
-            title1 = title;
+            title = doc.getElementsByTagName("title")[0].innerHTML;
 
-            console.log(title);
+            var info = doc.getElementsByTagName('META')[0];
+            for (var i= 0 ; i < info.length; i++)
+                if (info[i].getAttribute('NAME').toLowerCase() == 'author')
+                   author = info[i].getAttribute('CONTENT');
 
-            //Remove redundant data
-            $(placeholder).remove();
-            title1 = title;
-
-            console.log(title);
-        },
-        error: function(error) {
-            object.error = error;
+            if (callback)
+            callback({"title": title, "author": author, "date": date});
         }
-    });
-
-    console.log(title1);
-
-    return title1
-
+    }
+    xmlhttp.open("GET", 'https://api.allorigins.win/get?url=' + encodeURIComponent(link), true);
+    xmlhttp.send();
 }
 
 function OutputSource(source)
@@ -43,7 +42,6 @@ function OutputSource(source)
     textarea.value = source;
     //textarea.value = "Tuomi, S. & Latvala, E. N.d. Opinnäytetyön ohjaajan käsikirja. Jyväskylä: Jyväskylän ammattikorkeakoulu. Viitattu 16.8.2016. https://oppimateriaalit.jamk.fi/yamk-kasikirja/.";
 }
-
 
 function CreateSource()
 {
@@ -68,24 +66,19 @@ function CreateSource()
        Today: dd + '.' + mm + '.' + yyyy
     };
 
-   var firstName = "Antti";
-   var lastName = "Veikkolainen";
-   var workName = "Suomalaiset juomavat paljon olutta";
-
-   var obj = GetPageData(link);
-   console.log(obj);
-   
-   OutputSource({
-            "lastName": lastName,
-            "firstName": firstName,
-            "date": date.NoDate,
-            "workName": workName,
-            "referred": date.Today,
-            "link": link
-        });
-
+   GetPageData(link, function(response) {
+    OutputSource({
+        "lastName": response.author,
+        "firstName": response.author,
+        "date": response.date ?? date.NoDate,
+        "workName": response.title,
+        "referred": date.Today,
+        "link": link
+    });
+   });
 }
 
+//#region Copy Functionality
 
 function Copy()
 {
@@ -101,4 +94,13 @@ function Copy()
 function outFunc() {
     var tooltip = document.getElementById("myTooltip");
     tooltip.innerHTML = "Copy to clipboard";
+}
+
+//#endregion
+
+function ToggleManualInfo()
+{
+    var inputs = document.getElementById("inputs");
+    $(inputs).toggleClass("show");
+
 }
