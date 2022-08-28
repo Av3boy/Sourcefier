@@ -1,6 +1,6 @@
 # Sourcefier
 
-Can't remember the format in which a 
+Can't remember the format in which a source item needs to be. We've got you covered!
 
 ## Introduction
 
