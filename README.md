@@ -1,7 +1,11 @@
 # Sourcefier
 
+Can't remember the format in which a 
+
 ## Introduction
 
-Input source link output ready source element for the end of your essay.
+Input source link to output a source element for the end of your essay.
 
-Sourcifier will scan the page HTTP headers, html &gt;head%lt; tags meta tags and other to determine the required values for a valid source reference.
+Sourcefier will scan the page HTTP headers, html head and meta tags and more to determine the required values for a valid source reference.
+
+## NOTE: Not all sites contain all the required information, such as the author or the release date so remember to check the output source validity.
