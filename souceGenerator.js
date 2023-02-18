@@ -9,88 +9,134 @@ document.onload = function()
     document.getElementById("lang").checked = lang === "fi" ? true : false;
 }
 
+function Load()
+{
+    // TODO: link to actual source generation
 
-//#region Source Generation 
+    // Activate the overlay
+    var overlay = document.getElementById("overlay");
+    overlay.style.display = "flex";
+
+    // TODO: This is temporary functionality to test the failing case
+
+    // Add a timer to simulate loading
+    setTimeout(() => {
+        overlay.style.display = "none";
+
+        // TODO: Show error only if source generation fails.  
+        var error = document.getElementById("error");
+        error.style.display = "block";
+
+        var manualModeCheckbox = document.getElementById("manual-mode");
+        manualModeCheckbox.checked = true;
+
+        var manual = document.getElementById("manual-input-container");
+        manual.style.display = "block";
+
+    }, "1000")
+      
+}
 
 function GetPageData(link, callback)
 {
+    if (!callback)
+        return; // TODO: Handle gracefully
+
+    // Initialize the http client based on browser.
     var xmlhttp = window.XMLHttpRequest ?
         new XMLHttpRequest() :                  // Code for Internet Explorer 7+, Firefox, Chrome, Opera, and Safari
         new ActiveXObject("Microsoft.XMLHTTP"); // Code for Internet Explorer 6 and Internet Explorer 5
 
     xmlhttp.onreadystatechange = function(data) {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
-            var title = "";
-            var authorFirstName = "";
-            var authorLastName = "";
+        // Handle success status
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             var date = "";
 
             var parser = new DOMParser();
             var doc = parser.parseFromString(xmlhttp.responseText, "text/html");
-            
-            // TODO: Look for publish date
-            title = doc.getElementsByTagName("title")[0].innerText;
-            
-            var jsDate = new Date(doc.lastModified); 
-            date = String(jsDate.getFullYear()); // January = 0
-            
-            // No date found NoDate
-            if (date === "")
-                date = "N.d";
-
-            title = doc.getElementsByTagName("title")[0].innerHTML;
-
-
-            // Look for author meta tag
-            var info = doc.querySelector('meta[name="author"]');
-
-            if (info !== null)
-            {
-                if (info.content !== "")
-                {
-                    //var author = info.content.split();
-
-                    // TODO: Split by ' '
-                }
-            }
-
-            // Look for author class
-            var authorClass = doc.getElementsByClassName(".author")[0];
-
-            console.log(authorClass);
-
-            if (authorClass !== undefined)
-            {
-                authorLastName = authorClass.innerText;
-            }
-
-            // Look for author id
-            var authorId = doc.getElementById("author");
-
-            if (authorId !== "")
-            {
-                authorLastName = authorFirstName.innerText;
-            }
-
-            // Look for 'a rel'
-            var authorAnchor = doc.querySelector('a[rel]');
-
-            console.log(authorAnchor);
-
-            if (authorAnchor !== undefined)
-            {
-                // TODO: Fix this
-
-                authorLastName = authorAnchor.innerText;
-            }
-
-            if (callback)
-                callback({"title": title, "author": { "lastName": authorLastName, "firstName": authorFirstName}, "date": date});
+         
+            // TODO: Link to functions retrieving data.
+            callback({
+                "title": title, 
+                "author": {},
+                 "date": date
+                });
         }
+
+        // TODO: Handle fail status
     }
+
+    // Send the request
+    // NOTE: We are sending the request through allorigins.win's proxy server to avoid CORS errors.
     xmlhttp.open("GET", 'https://api.allorigins.win/get?url=' + encodeURIComponent(link), true);
     xmlhttp.send();
+}
+function GetTitle()
+{
+    // TODO: Look for publish date
+    return doc.getElementsByTagName("title")[0].innerText;
+}
+
+function GetAuthor()
+{
+    // Look for author meta tag
+    var info = doc.querySelector('meta[name="author"]');
+
+    if (info !== null)
+    {
+        if (info.content !== "")
+        {
+            //var author = info.content.split();
+
+            // TODO: Split by ' '
+        }
+    }
+
+    // Look for author class
+    var authorClass = doc.getElementsByClassName(".author")[0];
+
+    console.log(authorClass);
+
+    if (authorClass !== undefined)
+    {
+        authorLastName = authorClass.innerText;
+    }
+
+    // Look for author id
+    var authorId = doc.getElementById("author");
+
+    if (authorId !== "")
+    {
+        authorLastName = authorFirstName.innerText;
+    }
+
+    // Look for 'a rel'
+    var authorAnchor = doc.querySelector('a[rel]');
+
+    console.log(authorAnchor);
+
+    if (authorAnchor !== undefined)
+    {
+        // TODO: Fix this
+
+        authorLastName = authorAnchor.innerText;
+    }
+
+    return {
+        "lastName": authorLastName, 
+        "firstName": authorFirstName
+    };
+}
+
+function GetDate()
+{
+    var jsDate = new Date(doc.lastModified); 
+    date = String(jsDate.getFullYear()); // January = 0
+    
+    // No date found NoDate
+    if (date === "")
+        date = "N.d";
 }
 
 function OutputSource(source)
@@ -156,10 +202,11 @@ function OutputSource(source)
 
 function CreateSource()
 {
+    // Find the user link
     var link = document.getElementById("link").value;
 
-    if (link === "")
-        link = document.getElementById("link").placeholder;
+    // TODO: Show error if the link was not provided.
+    if (link === "") { }
 
     /*
     Step 1. Who -> Lastname, Firstname's first letter.
@@ -179,20 +226,23 @@ function CreateSource()
 
     var lang = document.getElementById("lang").checked;
 
-   GetPageData(link, function(response) {
-    OutputSource({
-        "lastName": lastName === "" ? response.author.lastName : lastName,
-        "firstName": firstName === "" ? response.author.firstName : firstName,
-        "date": date === "" ? response.date ?? date.NoDate: date,
-        "title": title === "" ? response.title: title,
-        "referred": referred,
-        "link": link,
-        "lang": lang
+    // Get the page data
+    GetPageData(link, function(response) {
+
+        // Send the retrieved data to the output text area
+        OutputSource({
+            "lastName": lastName === "" ? response.author.lastName : lastName,
+            "firstName": firstName === "" ? response.author.firstName : firstName,
+            "date": date === "" ? response.date ?? date.NoDate: date,
+            "title": title === "" ? response.title: title,
+            "referred": referred,
+            "link": link,
+            "lang": lang
+        });
     });
-   });
 }
 
-// Copy to clipboard functionality
+// "Copy to clipboard" functionality
 function Copy()
 {
     var copyText = document.getElementById("textarea");
@@ -211,22 +261,4 @@ function Copy()
 
         // tooltip.innerHTML = "Copied: " + copyText.value;
     }
-}
-
-function ChangeLanguage()
-{
-    var value = document.getElementById("lang").checked;
-}
-
-function DisableDate()
-{
-    var use = document.getElementById("useDate").checked;
-
-    var date = document.getElementById("date");
-    date.disabled = !use;
-
-    if (use === false)
-        date.placeholder = "N.d.";
-    else
-        date.placeholder = "Date";
 }
