@@ -1,0 +1,23 @@
+﻿
+<button type="button" class="collapsible" @onclick="@OnCollapsibleClick">
+    <p><i class="fa-solid fa-chevron-right" /> @Title</p>
+    <hr />
+</button>
+<div style="@contentClass">
+    @Content
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+
+    private bool visible = true;
+
+    string contentClass => visible ? "display: block;" : "display: none;";
+
+    private void OnCollapsibleClick()
+        => visible = !visible;
+}

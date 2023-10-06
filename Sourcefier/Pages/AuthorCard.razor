@@ -1,0 +1,53 @@
+﻿<div class="row">
+    <div class="col">
+        <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
+        <input type="text" class="form-control" maxlength="1" id="author" placeholder="Etunimi" aria-label="Etunimi" value="@_author?.Initial" @onchange="@OnInitialChanged">
+    </div>
+    <div class="col">
+        <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
+        <input type="text" class="form-control" id="author-lastname" placeholder="Sukunimi" aria-label="Etunimi" value="@_author?.LastName" @onchange="@OnLastnameChanged">
+    </div>
+    <div class="col">
+        <button class="btn" @onclick="@OnRemoveAuthorClicked">Poista tekijä</button>
+    </div>
+</div>
+
+@code {
+    private AuthorDto? _author { get; set; }
+
+    [Parameter]
+    public EventCallback<AuthorDto> OnAuthorChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<AuthorDto> OnAuthorCreated { get; set; }
+
+    [Parameter]
+    public EventCallback RemoveAuthor { get; set; }
+
+    private async Task OnRemoveAuthorClicked()
+        => await RemoveAuthor.InvokeAsync();
+
+    private async Task OnLastnameChanged()
+    {
+        if (_author is null)
+        {
+            _author = new AuthorDto();
+            await OnAuthorCreated.InvokeAsync(_author);
+            return;
+        }
+
+        await OnAuthorChanged.InvokeAsync(_author);
+    }
+
+    private async Task OnInitialChanged()
+    {
+        if (_author is null)
+        {
+            _author = new AuthorDto();
+            await OnAuthorCreated.InvokeAsync(_author);
+            return;
+        }
+
+        await OnAuthorChanged.InvokeAsync(_author);
+    }
+}
