@@ -1,4 +1,4 @@
-﻿namespace Sourcefier.Pages;
+﻿namespace Sourcefier.DTO.Enums;
 
 public enum SourceType
 {
