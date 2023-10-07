@@ -9,8 +9,8 @@
     <div class="settings">
         <div class="language">
             <label>Language:</label>
-            <button @onclick="@(() => Language = Language.Finnish)"><img src="fi.svg" /></button>
-            <button @onclick="@(() => Language = Language.English)"><img src="gb.svg" /></button>
+            <button @onclick="@(() => OnLangaugeChange(Language.Finnish))"><img src="fi.svg" /></button>
+            <button @onclick="@(() => OnLangaugeChange(Language.English))"><img src="gb.svg" /></button>
         </div>
 
         <div class="mode">
@@ -37,6 +37,8 @@
 
     </div>
 </header>
+
+@Language
 
 <div class="help">
     <p>Katso JAMK:n viralliset ohjeet lähdeluettelon laatimiseen.</p>
