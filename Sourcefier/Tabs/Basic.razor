@@ -2,8 +2,14 @@
 
     <Collapisble>
         <Title>
-            <strong>1) Kuka</strong> – kirjoittaja tai suullinen tietolähde – aina henkilö, järjestyksessä sukunimi, etunimen alkukirjain.
-            Ellei henkilötekijää ole, ensimmäiseksi tiedoksi siirtyy listan 3. kohta ”Mitä<strong> – </strong> lähteen nimi tai otsikko”.
+            <strong>1) Kuka</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – kirjoittaja tai suullinen tietolähde – aina henkilö, järjestyksessä sukunimi, etunimen alkukirjain.
+                    Ellei henkilötekijää ole, ensimmäiseksi tiedoksi siirtyy listan 3. kohta ”Mitä<strong> – </strong> lähteen nimi tai otsikko”.
+                </text>
+            }
         </Title>
         <Content>
             <button class="btn" @onclick="@AddAuthor">Lisää tekijä</button>
@@ -19,8 +25,14 @@
 
     <Collapisble>
         <Title>
-            <strong>2) Milloin</strong> – julkaisuvuosi (ellei tiedossa, käytetään lyhennettä N.d. = no date, tekstiviitteessä n.d.
-            Lähdeluettelossa on iso N, koska se on pisteen jäljessä, tekstviiitteessä on pieni n.
+            <strong>2) Milloin</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – julkaisuvuosi (ellei tiedossa, käytetään lyhennettä N.d. = no date, tekstiviitteessä n.d.
+                    Lähdeluettelossa on iso N, koska se on pisteen jäljessä, tekstviiitteessä on pieni n.
+                </text>
+            }
         </Title>
         <Content>
             <div class="form-check">
@@ -50,10 +62,17 @@
 
     <Collapisble>
         <Title>
-            <strong>4) Missä</strong> – tiedot julkaisusta, painoksesta, julkaisupaikasta ja kustantajasta, verkko-osoitteesta jne.<br>
-            – Teoksen painos merkitään vain, jos se on muu kuin ensimmäinen. Painostiedot voi haluttaessa lyhentää, esimerkiksi p. (painos), uud. p. (uudistettu painos) tai korj. p. (korjattu painos).<br>
-            – Kustantajan tietoihin ei yleensä lisätä yhtiömuotoa (oy., ry., ky.), poikkeuksena WSOY.<br>
-            – Tarvittaessa ilmoitetaan myös täsmällinen julkaisu- tai päivitysaika, esimerkiksi lehden tai radio-ohjelman julkaisupäivämäärä. Viittauspäivämäärä verkkojulkaisuihin ilmoitetaan aina.
+            <strong>4) Missä</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – tiedot julkaisusta, painoksesta, julkaisupaikasta ja kustantajasta, verkko-osoitteesta jne.<br>
+                    – Teoksen painos merkitään vain, jos se on muu kuin ensimmäinen. Painostiedot voi haluttaessa lyhentää, esimerkiksi p. (painos), uud. p. (uudistettu painos) tai korj. p. (korjattu painos).<br>
+                    – Kustantajan tietoihin ei yleensä lisätä yhtiömuotoa (oy., ry., ky.), poikkeuksena WSOY.<br>
+                    – Tarvittaessa ilmoitetaan myös täsmällinen julkaisu- tai päivitysaika, esimerkiksi lehden tai radio-ohjelman julkaisupäivämäärä. Viittauspäivämäärä verkkojulkaisuihin ilmoitetaan aina.
+
+                </text>
+            }
         </Title>
         <Content>
             <div class="mb-3">
@@ -81,6 +100,14 @@
                 </InputSelect>
             </div>
 
+            @if (FormModel.Type == SourceType.Thesis)
+            {
+                <div class="mb-3">
+                    <label for="other-info" class="form-label">Opinnäytetyön julkaisema koulu.</label>
+                    <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot." @bind-value="FormModel.OtherInfo">
+                </div>
+            }
+
             <div class="mb-3">
                 <label for="other-info" class="form-label">Muut julkaisua koskevat tiedot, mm. viestimen tyyppi (esimerkiksi sähköpostiviesti, CD-levy, DVD), toimittajat, painostiedot , sivunumerot jne.</label>
                 <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot." @bind-value="FormModel.OtherInfo">
@@ -96,9 +123,16 @@
                 <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot." @bind-value="FormModel.Other">
             </div>
 
+            @* NOTE: viittamisen ajankohta ja linkki ovat tässä järjestyksessä aina viimeiset tiedot. *@
+
             <div class="mb-3">
                 <label for="date-referred" class="form-label">Viittaamisen ajankohta päivämääränä.</label>
                 <input type="text" class="form-control" id="other" placeholder="Syötä viittaamisen ajankohta." @bind-value="FormModel.DateReferred">
+            </div>
+
+            <div class="mb-3">
+                <label for="link" class="form-label">Linkki</label>
+                <input type="text" class="form-control" id="other" placeholder="Syötä linkki." @bind-value="FormModel.Link">
             </div>
         </Content>
     </Collapisble>
@@ -107,4 +141,4 @@
 
 </EditForm>
 
-<InputTextArea @bind-Value="@Source" />
+<InputTextArea class="source" @bind-Value="@Source" />

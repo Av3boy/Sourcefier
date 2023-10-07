@@ -1,11 +1,11 @@
 ﻿<div class="row">
     <div class="col">
-        <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
-        <input type="text" class="form-control" maxlength="1" id="author" placeholder="Etunimi" aria-label="Etunimi" value="@_author?.Initial" @onchange="@OnInitialChanged">
+        <label for="author" class="form-label">Etunimi</label>
+        <input type="text" class="form-control" maxlength="1" id="author" placeholder="Syötä etunimi" aria-label="Etunimi" value="@_author?.Initial" @onchange="@OnInitialChanged">
     </div>
     <div class="col">
-        <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
-        <input type="text" class="form-control" id="author-lastname" placeholder="Sukunimi" aria-label="Etunimi" value="@_author?.LastName" @onchange="@OnLastnameChanged">
+        <label for="author" class="form-label">Sukunimi</label>
+        <input type="text" class="form-control" id="author-lastname" placeholder="Syötä sukunimi" aria-label="Etunimi" value="@_author?.LastName" @onchange="@OnLastnameChanged">
     </div>
     <div class="col">
         <button class="btn" @onclick="@OnRemoveAuthorClicked">Poista tekijä</button>
@@ -23,6 +23,9 @@
 
     [Parameter]
     public EventCallback RemoveAuthor { get; set; }
+
+    [Parameter]
+    public Mode Mode { get; set; } = Mode.Manual;
 
     private async Task OnRemoveAuthorClicked()
         => await RemoveAuthor.InvokeAsync();

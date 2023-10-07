@@ -2,7 +2,6 @@
 
 public enum Mode
 {
-    Basic,
-    Advanced,
+    Manual,
     Automated
 }

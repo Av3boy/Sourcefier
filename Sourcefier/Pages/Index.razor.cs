@@ -16,9 +16,11 @@ public partial class Index
     [SupplyParameterFromQuery]
     public string? Lang { get; set; }
 
-    protected Mode Mode { get; set; } = Mode.Basic;
+    protected Mode Mode { get; set; } = Mode.Manual;
 
     protected Language Language { get; set; } = Language.Finnish;
+
+    protected bool ShowHelpText { get; set; } = true;
 
     #endregion
 

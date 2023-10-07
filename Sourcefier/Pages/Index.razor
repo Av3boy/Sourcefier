@@ -7,24 +7,19 @@
     </div>
 
     <div class="settings">
-        <div class="language">
+        <div class="language setting">
             <label>Language:</label>
             <button @onclick="@(() => OnLangaugeChange(Language.Finnish))"><img src="fi.svg" /></button>
             <button @onclick="@(() => OnLangaugeChange(Language.English))"><img src="gb.svg" /></button>
         </div>
 
-        <div class="mode">
+        <div class="mode setting">
             <label>Mode: </label>
             <InputRadioGroup @bind-Value="@Mode">
 
                 <div class="input-mode">
                     <label>Basic:</label>
-                    <InputRadio Value="@Mode.Basic" />
-                </div>
-
-                <div class="input-mode">
-                    <label>Advanced:</label>
-                    <InputRadio Value="@Mode.Advanced" />
+                    <InputRadio Value="@Mode.Manual" />
                 </div>
 
                 <div class="input-mode">
@@ -35,26 +30,32 @@
             </InputRadioGroup>
         </div>
 
+        <div class="show-help setting">
+            <label class="form-check-label" for="release-known">Näytä apu tekstit?</label>
+            <input class="release-known" type="checkbox" checked="@ShowHelpText" id="release-known" @bind-value="@ShowHelpText">
+        </div>
+
     </div>
 </header>
 
-@Language
-
-<div class="help">
-    <p>Katso JAMK:n viralliset ohjeet lähdeluettelon laatimiseen.</p>
-    <ul>
-        <li>
-            <a href="https://oppimateriaalit.jamk.fi/raportointiohje/5-lahteiden-kaytto/5-3-lahdeluettelon-laatiminen/">
-                Lähdeluettelon laatiminen
-            </a>
-        </li>
-        <li>
-            <a href="https://oppimateriaalit.jamk.fi/raportointiohje/esimerkkeja-lahteiden-merkinnasta/">
-                Esimerkkejä lähteiden merkinnästä
-            </a>
-        </li>
-    </ul>
-</div>
+@if (ShowHelpText)
+{
+    <div class="help">
+        <p>Katso JAMK:n viralliset ohjeet lähdeluettelon laatimiseen.</p>
+        <ul>
+            <li>
+                <a href="https://oppimateriaalit.jamk.fi/raportointiohje/5-lahteiden-kaytto/5-3-lahdeluettelon-laatiminen/">
+                    Lähdeluettelon laatiminen
+                </a>
+            </li>
+            <li>
+                <a href="https://oppimateriaalit.jamk.fi/raportointiohje/esimerkkeja-lahteiden-merkinnasta/">
+                    Esimerkkejä lähteiden merkinnästä
+                </a>
+            </li>
+        </ul>
+    </div>
+}
 
 <style>
     header {
@@ -62,8 +63,8 @@
         justify-content: space-between;
     }
 
-    .language {
-
+    .setting {
+        margin-top: 1em;
     }
 
     .language button {
@@ -76,6 +77,11 @@
 
     .input-mode {
         display: block;
+    }
+
+    .source {
+        width: 100%;
+        height: 100px;
     }
 </style>
 
@@ -92,13 +98,13 @@ APA (American Psychological Association)
 
 @switch (Mode)
 {
-    case Mode.Basic:
-    <Basic />
+    case Mode.Manual:
+        <Basic ShowHelpText="@ShowHelpText" />
         break;
 
-    case Mode.Advanced:
     case Mode.Automated:
-        <p>This mode is not yet supported.</p>
+        <h1>This mode is not yet supported.</h1>
+        <Automated />
         break;
 
     default:

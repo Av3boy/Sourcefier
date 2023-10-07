@@ -7,6 +7,9 @@ namespace Sourcefier.Tabs;
 
 public partial class Basic
 {
+    [Parameter]
+    public bool ShowHelpText { get; set; }
+
     Model FormModel { get; set; } = new Model();
 
     public string Source { get; set; } = string.Empty;
