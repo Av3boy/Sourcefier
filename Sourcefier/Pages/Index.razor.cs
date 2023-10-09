@@ -24,7 +24,7 @@ public partial class Index
 
     #endregion
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         if (string.IsNullOrWhiteSpace(Lang))
             return;

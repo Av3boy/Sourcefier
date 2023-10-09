@@ -1,19 +1,32 @@
 ﻿<div class="row">
     <div class="col">
-        <label for="author" class="form-label">Etunimi</label>
-        <input type="text" class="form-control" maxlength="1" id="author" placeholder="Syötä etunimi" aria-label="Etunimi" value="@_author?.Initial" @onchange="@OnInitialChanged">
+        <label for="author" class="form-label">@_authorInitialLabel</label>
+        <InputText Value="@_authorInitial" ValueChanged="@((string authorInitial) => OnInitialChanged(authorInitial))" ValueExpression="(() => _authorInitial)"
+                   class="form-control" maxlength="1" id="author" placeholder="@_authorInitialPlaceholder" aria-label="Etunimi" />
     </div>
     <div class="col">
-        <label for="author" class="form-label">Sukunimi</label>
-        <input type="text" class="form-control" id="author-lastname" placeholder="Syötä sukunimi" aria-label="Etunimi" value="@_author?.LastName" @onchange="@OnLastnameChanged">
+        <label for="author" class="form-label">@_authorLastnameLabel</label>
+        <InputText Value="@_author?.LastName" ValueChanged="@((string lastname) => OnLastnameChanged(lastname))" ValueExpression="(() => _author.LastName)"
+                   class="form-control" id="author-lastname" placeholder="@_authorLastnamePlaceholder" aria-label="Sukunimi" />
     </div>
-    <div class="col">
-        <button class="btn" @onclick="@OnRemoveAuthorClicked">Poista tekijä</button>
+    <div class="col delete-btn">
+        <button type="button" class="btn btn-danger" @onclick="@OnRemoveAuthorClicked"><i class="fa-solid fa-trash"></i> Poista tekijä</button>
     </div>
 </div>
 
 @code {
-    private AuthorDto? _author { get; set; }
+    private string? _authorInitial { get; set; }
+
+    private AuthorDto _author { get; set; } = new AuthorDto();
+
+    [Parameter]
+    public int Num { get; set; }
+
+    private string _authorInitialLabel => $"{Num}. Tekijän Etunimi:";
+    private string _authorLastnameLabel => $"{Num}. Tekijän Sukunimi:";
+
+    private string _authorInitialPlaceholder  => $"Syötä {Num}. tekijän Etunimi:";
+    private string _authorLastnamePlaceholder => $"Syötä {Num}. tekijän Sukunimi:";
 
     [Parameter]
     public EventCallback<AuthorDto> OnAuthorChanged { get; set; }
@@ -27,30 +40,33 @@
     [Parameter]
     public Mode Mode { get; set; } = Mode.Manual;
 
+    private bool _authorCreated = false;
+
     private async Task OnRemoveAuthorClicked()
         => await RemoveAuthor.InvokeAsync();
 
-    private async Task OnLastnameChanged()
+    private async Task OnLastnameChanged(string lastname)
     {
-        if (_author is null)
-        {
-            _author = new AuthorDto();
-            await OnAuthorCreated.InvokeAsync(_author);
-            return;
-        }
+        _author.LastName = lastname;
+        await OnAuthorChanged.InvokeAsync(_author);
+    }
+
+    private async Task OnInitialChanged(string authorInitial)
+    {
+        _authorInitial = authorInitial;
+        _author.Initial = authorInitial!.First();
 
         await OnAuthorChanged.InvokeAsync(_author);
     }
 
-    private async Task OnInitialChanged()
+    private async Task AuthorCreated()
     {
-        if (_author is null)
-        {
-            _author = new AuthorDto();
-            await OnAuthorCreated.InvokeAsync(_author);
-            return;
-        }
+        await OnAuthorCreated.InvokeAsync(_author);
+        _authorCreated = true;
+    }
 
-        await OnAuthorChanged.InvokeAsync(_author);
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthorCreated();
     }
 }

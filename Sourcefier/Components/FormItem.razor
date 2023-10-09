@@ -1,0 +1,12 @@
+﻿<div class="mb-3">
+    <label for="type" class="form-label">@Label</label>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] 
+    public string Label { get; set; } = "Type";
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

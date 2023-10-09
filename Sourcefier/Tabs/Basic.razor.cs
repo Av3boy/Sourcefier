@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
+
+using Sourcefier.Components;
 using Sourcefier.DTO;
 using Sourcefier.DTO.Enums;
+using Sourcefier.Extensions;
+
 using System.Text;
 
 namespace Sourcefier.Tabs;
@@ -16,10 +20,19 @@ public partial class Basic
 
     private int numAuthors { get; set; }
 
-    private void AddAuthor() => numAuthors += 1;
-    private void RemoveAuthor() => numAuthors -= 1;
-
     private bool ReleaseKnown { get; set; } = true;
+
+
+    private async Task AddAuthor()
+    {
+        numAuthors += 1;
+    }
+
+    private void RemoveAuthor(int index)
+    {
+        numAuthors -= 1;
+        FormModel.Authors.RemoveAt(index);
+    }
 
     protected void OnReleaseKnownChanged(ChangeEventArgs e)
     {
@@ -42,7 +55,7 @@ public partial class Basic
 
             // Step 2: When
             if (ReleaseKnown)
-                sourceBuilder.Append($"{FormModel.ReleaseYear} ");
+                sourceBuilder.Append($"{FormModel.ReleaseYear}. ");
             else
                 sourceBuilder.Append("N.d. ");
         }
@@ -110,7 +123,7 @@ public partial class Basic
         bool hasMoreItems = authors.MoveNext();
         while (hasMoreItems)
         {
-            authorBuilder.Append($"{authors.Current.LastName}, {char.ToUpper(authors.Current.Initial)}.");
+            authorBuilder.Append($"{authors.Current.LastName}, {char.ToUpper(authors.Current.Initial)}. ");
             hasMoreItems = authors.MoveNext();
 
             // Has one more item
@@ -125,8 +138,14 @@ public partial class Basic
         return authorBuilder.ToString();
     }
 
-    private async Task AuthorChanged(AuthorDto author, int index)
+    private void AuthorChanged(AuthorDto author)
     {
-        // TODO:
+        var authorElem = FormModel.Authors.FirstOrDefault(item => item.Id.Equals(author.Id));
+
+        if (authorElem is null)
+            throw new InvalidOperationException("Author not found.");
+
+        authorElem!.LastName = author.LastName;
+        authorElem!.Initial = author.Initial;
     }
 }
