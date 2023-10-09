@@ -1,0 +1,170 @@
+﻿<EditForm Model="FormModel" OnValidSubmit="@CreateSource">
+
+    <DataAnnotationsValidator />
+
+    <Collapsible ContentMaxHeight="@(100 + (numAuthors * 100))">
+        <Title>
+            <strong>1) Kuka</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – kirjoittaja tai suullinen tietolähde – aina henkilö, järjestyksessä sukunimi, etunimen alkukirjain.
+                    Ellei henkilötekijää ole, ensimmäiseksi tiedoksi siirtyy listan 3. kohta ”Mitä<strong> – </strong> lähteen nimi tai otsikko”.
+                </text>
+            }
+        </Title>
+        <Content>
+            <button type="button" class="btn btn-light" @onclick="@AddAuthor"><i class="fa-solid fa-plus"></i> Lisää tekijä</button>
+
+            @for (int i = 0; i < numAuthors; i++)
+            {
+                <AuthorCard OnAuthorChanged="@((AuthorDto author) => AuthorChanged(author))"
+                            OnAuthorCreated="@((AuthorDto author) => FormModel.Authors.Add(author))"
+                            RemoveAuthor="@(() => RemoveAuthor(i))" Num="@(i + 1)" />
+            }
+
+            @if (numAuthors == 0)
+            {
+                <p class="text-muted">Ei tekijöitä.</p>
+            }
+        </Content>
+    </Collapsible>
+
+    <Collapsible ContentMaxHeight="300">
+        <Title>
+            <strong>2) Milloin</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – julkaisuvuosi (ellei tiedossa, käytetään lyhennettä N.d. = no date, tekstiviitteessä n.d.
+                    Lähdeluettelossa on iso N, koska se on pisteen jäljessä, tekstviiitteessä on pieni n.
+                </text>
+            }
+        </Title>
+        <Content>
+            <div class="form-check">
+                <label class="form-check-label" for="release-known">Julkaisu päivä tunnettu?</label>
+                <input class="form-check-input" type="checkbox" checked="@ReleaseKnown" id="release-known" @oninput="@OnReleaseKnownChanged">
+            </div>
+
+            <div class="mb-3">
+                <label for="release-date" class="form-label">Julkaisuaika vuosilukuna:</label>
+                <input type="number" class="form-control" id="release-date" placeholder="@(ReleaseKnown ? "Syötä julkaisu vuosi." : "N.d.")"
+                @bind-value="FormModel.ReleaseYear" disabled="@(!ReleaseKnown)">
+
+                <ValidationMessage For="(() => FormModel.ReleaseYear)" />
+            </div>
+        </Content>
+    </Collapsible>
+
+    <Collapsible ContentMaxHeight="200">
+        <Title>
+            <strong>3) Mitä</strong>
+        </Title>
+        <Content>
+            <div class="mb-3">
+                <label for="title" class="form-label">Teoksen nimi tai otsikko @(ShowHelpText ? "(ilman päättävää pistettä)" : ""):</label>
+                <input type="text" class="form-control" id="title" placeholder="Syötä teoksen nimi tai otsikko.." @bind-value="FormModel.Title">
+
+                <ValidationMessage For="(() => FormModel.Title)" />
+            </div>
+        </Content>
+    </Collapsible>
+
+    <Collapsible ContentMaxHeight="2000">
+        <Title>
+            <strong>4) Missä</strong>
+            @if (ShowHelpText)
+            {
+                <text>
+                    – tiedot julkaisusta, painoksesta, julkaisupaikasta ja kustantajasta, verkko-osoitteesta jne.<br>
+                    – Teoksen painos merkitään vain, jos se on muu kuin ensimmäinen. Painostiedot voi haluttaessa lyhentää, esimerkiksi p. (painos), uud. p. (uudistettu painos) tai korj. p. (korjattu painos).<br>
+                    – Kustantajan tietoihin ei yleensä lisätä yhtiömuotoa (oy., ry., ky.), poikkeuksena WSOY.<br>
+                    – Tarvittaessa ilmoitetaan myös täsmällinen julkaisu- tai päivitysaika, esimerkiksi lehden tai radio-ohjelman julkaisupäivämäärä. Viittauspäivämäärä verkkojulkaisuihin ilmoitetaan aina.
+
+                </text>
+            }
+        </Title>
+        <Content>
+            <div class="mb-3">
+                <label for="type" class="form-label">Lähteen tyyppi @(ShowHelpText ? "(opinnäytetyö, pöytäkirja, jne.)" : ""):</label>
+                <InputSelect class="@($"form-select {(FormModel.Type == SourceType.Unknown ? "text-muted" : string.Empty)}")" aria-label="source type" @bind-Value="FormModel.Type">
+                    @if (FormModel.Type == SourceType.Unknown)
+                    {
+                        <option value="@SourceType.Unknown" selected class="text-muted">Valitse teoksen tyyppi..</option>
+                    }
+                    <option style="color: black;" value="@SourceType.Thesis">Opinnäytetyö</option>
+                    <option style="color: black;" value="@SourceType.Book">Kirja</option>
+                    <option style="color: black;" value="@SourceType.Record">Pöytäkirja</option>
+                    <option style="color: black;" value="@SourceType.Email">Sähköpostiviesti</option>
+                    <option style="color: black;" value="@SourceType.CDOrDvd">CD -tai DVD-levy</option>
+                </InputSelect>
+
+                <ValidationMessage For="(() => FormModel.Type)" />
+            </div>
+
+            @if (FormModel.Type == SourceType.Thesis)
+            {
+                <div class="mb-3">
+                    <label for="other-info" class="form-label">Koulu, joka julkaisi opinnäytetyön:</label>
+                    <input type="text" class="form-control" id="other-info" placeholder="Syötä koulu, joka julkaisi opinnäytetyön..." @bind-value="FormModel.School">
+
+                    <ValidationMessage For="(() => FormModel.School)" />
+                </div>
+            }
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Teoksen painos:</label>
+                <input type="text" class="form-control" id="type" placeholder="Syötä teoksen painos..." @bind-value="FormModel.PublishEdition">
+
+                <ValidationMessage For="(() => FormModel.PublishEdition)" />
+
+            </div>
+
+            <div class="mb-3">
+                <label for="other-info" class="form-label">Muut julkaisua koskevat tiedot, mm. viestimen tyyppi 
+                    @(ShowHelpText ? "(esimerkiksi sähköpostiviesti, CD-levy, DVD), toimittajat, painostiedot , sivunumerot jne." : ""):</label>
+                <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot..." @bind-value="FormModel.OtherInfo">
+
+                <ValidationMessage For="(() => FormModel.OtherInfo)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="publisher" class="form-label">Julkaisija / kustantaja tai muu julkaisijataho:</label>
+                <input type="text" class="form-control" id="publisher" placeholder="Syötä julkaisija..." @bind-value="FormModel.Publisher">
+
+                <ValidationMessage For="(() => FormModel.Publisher)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="other" class="form-label">Mahdolliset muut täsmentävät tiedot:</label>
+                <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
+
+                <ValidationMessage For="(() => FormModel.Other)" />
+            </div>
+
+            @* NOTE: viittamisen ajankohta ja linkki ovat tässä järjestyksessä aina viimeiset tiedot. *@
+
+            <div class="mb-3">
+                <label for="date-referred" class="form-label">Viittaamisen ajankohta päivämääränä:</label>
+                @*<input type="text" class="form-control" id="other" placeholder="Syötä viittaamisen ajankohta..." @bind-value="FormModel.DateReferred">*@
+                <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
+
+                <ValidationMessage For="(() => FormModel.DateReferred)" />
+            </div>
+
+
+            <div class="mb-3">
+                <label for="link" class="form-label">Linkki:</label>
+                <input type="text" class="form-control" id="other" placeholder="https://en.wikipedia.org/wiki/Pingu" @bind-value="FormModel.Link">
+
+                <ValidationMessage For="(() => FormModel.Link)" />
+            </div>
+        </Content>
+    </Collapsible>
+
+    <button type="submit" class="btn btn-primary mb-3">Valmis</button>
+
+</EditForm>
+
+<InputTextArea class="source" @bind-Value="@Source" />

@@ -1,0 +1,30 @@
+﻿<div class="collapsible-container">
+    <button type="button" class="@($"collapsible {_contentActive}")" @onclick="@OnCollapsibleClick">
+        <p><i class="@_chevronStyle" /> @Title</p>
+    </button>
+    <div id="@Id" class="content" style="@_contentStyle">
+        @Content
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    [Parameter]
+    public RenderFragment? Title { get; set; }
+
+    [Parameter]
+    public int ContentMaxHeight { get; set; } = 0;
+
+    private string Id = Guid.NewGuid().ToString();
+
+    private bool visible = true;
+
+    private string _chevronStyle => $"fa-solid fa-chevron-right {(visible ? "down" : "right")}";
+    private string _contentActive => visible ? "active" : string.Empty;
+    private string _contentStyle => $"max-height: {(visible ? $"{ContentMaxHeight}px" : "0")}";
+
+    private void OnCollapsibleClick()
+        => visible = !visible;
+}

@@ -1,0 +1,72 @@
+﻿<div class="row">
+    <div class="col">
+        <label for="author" class="form-label">@_authorInitialLabel</label>
+        <InputText Value="@_authorInitial" ValueChanged="@((string authorInitial) => OnInitialChanged(authorInitial))" ValueExpression="(() => _authorInitial)"
+                   class="form-control" maxlength="1" id="author" placeholder="@_authorInitialPlaceholder" aria-label="Etunimi" />
+    </div>
+    <div class="col">
+        <label for="author" class="form-label">@_authorLastnameLabel</label>
+        <InputText Value="@_author?.LastName" ValueChanged="@((string lastname) => OnLastnameChanged(lastname))" ValueExpression="(() => _author.LastName)"
+                   class="form-control" id="author-lastname" placeholder="@_authorLastnamePlaceholder" aria-label="Sukunimi" />
+    </div>
+    <div class="col delete-btn">
+        <button type="button" class="btn btn-danger" @onclick="@OnRemoveAuthorClicked"><i class="fa-solid fa-trash"></i> Poista tekijä</button>
+    </div>
+</div>
+
+@code {
+    private string? _authorInitial { get; set; }
+
+    private AuthorDto _author { get; set; } = new AuthorDto();
+
+    [Parameter]
+    public int Num { get; set; }
+
+    private string _authorInitialLabel => $"{Num}. Tekijän Etunimi:";
+    private string _authorLastnameLabel => $"{Num}. Tekijän Sukunimi:";
+
+    private string _authorInitialPlaceholder  => $"Syötä {Num}. tekijän Etunimi:";
+    private string _authorLastnamePlaceholder => $"Syötä {Num}. tekijän Sukunimi:";
+
+    [Parameter]
+    public EventCallback<AuthorDto> OnAuthorChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<AuthorDto> OnAuthorCreated { get; set; }
+
+    [Parameter]
+    public EventCallback RemoveAuthor { get; set; }
+
+    [Parameter]
+    public Mode Mode { get; set; } = Mode.Manual;
+
+    private bool _authorCreated = false;
+
+    private async Task OnRemoveAuthorClicked()
+        => await RemoveAuthor.InvokeAsync();
+
+    private async Task OnLastnameChanged(string lastname)
+    {
+        _author.LastName = lastname;
+        await OnAuthorChanged.InvokeAsync(_author);
+    }
+
+    private async Task OnInitialChanged(string authorInitial)
+    {
+        _authorInitial = authorInitial;
+        _author.Initial = authorInitial!.First();
+
+        await OnAuthorChanged.InvokeAsync(_author);
+    }
+
+    private async Task AuthorCreated()
+    {
+        await OnAuthorCreated.InvokeAsync(_author);
+        _authorCreated = true;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthorCreated();
+    }
+}

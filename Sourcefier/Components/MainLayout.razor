@@ -1,0 +1,32 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <main style="padding: 2em;">
+        @Body
+    </main>
+</div>
+
+<footer>
+
+    <div>
+        <i class="fa-brands fa-github"></i>
+        <a href="https://github.com/Av3boy/Sourcefier">Sourcefier Github</a>
+    </div>
+
+    <div>
+        <h2>Found a bug or other problems with the site?</h2>
+        <p>Submit a issue <a href="https://github.com/Av3boy/Sourcefier/issues">here.</a></p>
+    </div>
+
+</footer>
+
+<style>
+    footer {
+        padding: 2em;
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr auto;
+        align-items: center;
+        background-color: gray;
+    }
+</style>

@@ -1,0 +1,19 @@
+﻿.row {
+    display: flex;
+    -webkit-justify-content: inherit;
+    justify-content: inherit;
+    margin: 1em 0;
+}
+
+.col {
+    padding-left: 0;
+}
+
+.delete-btn {
+    position: relative;
+}
+
+.btn {
+    position: absolute;
+    bottom: 0;
+}

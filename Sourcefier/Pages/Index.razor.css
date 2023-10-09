@@ -1,0 +1,24 @@
+﻿header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.setting {
+    margin-top: 1em;
+}
+
+.settings > * {
+    border-bottom: 1px solid lightgrey;
+    padding: 0.3em;
+}
+
+.language button {
+    border: none;
+    background-color: none;
+    padding: 0;
+    width: 50px;
+}
+
+.input-mode {
+    display: block;
+}

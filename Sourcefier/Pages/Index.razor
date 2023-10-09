@@ -1,24 +1,62 @@
 ﻿@page "/"
+@using System.ComponentModel.DataAnnotations;
 
-<h1>Sourcefier</h1>
+<header>
+    <div class="title">
+        <h1>Sourcefier</h1>
+        <p>Etkö muista miten lähdemerkintä tehdään? Tämän lomakkeen avulla voit generoida lähdemerkinnän tietojen avulla.</p>
+    </div>
 
-<p>Etkö muista miten lähdemerkintä tehdään? Tämän lomakkeen avulla voit generoida lähdemerkinnän tietojen avulla.</p>
+    <div class="settings">
+        <div class="language setting">
+            <label>Language:</label>
+            <button @onclick="@(() => OnLangaugeChange(Language.Finnish))"><img src="fi.svg" /></button>
+            <button @onclick="@(() => OnLangaugeChange(Language.English))"><img src="gb.svg" /></button>
+        </div>
 
-<p>Katso JAMK:n viralliset ohjeet lähdeluettelon laatimiseen.</p>
-<ul>
-    <li><a href="https://oppimateriaalit.jamk.fi/raportointiohje/5-lahteiden-kaytto/5-3-lahdeluettelon-laatiminen/">
-        Lähdeluettelon laatiminen
-    </a></li>
-    <li><a href="https://oppimateriaalit.jamk.fi/raportointiohje/esimerkkeja-lahteiden-merkinnasta/">
-        Esimerkkejä lähteiden merkinnästä
-    </a></li>
-</ul>
+        <div class="mode setting">
+            <label>Mode: </label>
+            <InputRadioGroup @bind-Value="@Mode">
 
-<style>
-    section {
-        margin: 2em 0;
-    }
-</style>
+                <div class="input-mode">
+                    <label>Manual:</label>
+                    <InputRadio Value="@Mode.Manual" />
+                </div>
+
+                <div class="input-mode">
+                    <label>Automated:</label>
+
+                    <InputRadio Value="@Mode.Automated" />
+                </div>
+            </InputRadioGroup>
+        </div>
+
+        <div class="show-help setting">
+            <label class="form-check-label" for="release-known">Näytä apu tekstit?</label>
+            <input class="release-known" type="checkbox" checked="@ShowHelpText" id="release-known" @bind-value="@ShowHelpText">
+        </div>
+
+    </div>
+</header>
+
+@if (ShowHelpText)
+{
+    <div class="help">
+        <p>Katso JAMK:n viralliset ohjeet lähdeluettelon laatimiseen.</p>
+        <ul>
+            <li>
+                <a href="https://oppimateriaalit.jamk.fi/raportointiohje/5-lahteiden-kaytto/5-3-lahdeluettelon-laatiminen/">
+                    Lähdeluettelon laatiminen
+                </a>
+            </li>
+            <li>
+                <a href="https://oppimateriaalit.jamk.fi/raportointiohje/esimerkkeja-lahteiden-merkinnasta/">
+                    Esimerkkejä lähteiden merkinnästä
+                </a>
+            </li>
+        </ul>
+    </div>
+}
 
 @* 
 TODO: Source styles:
@@ -31,153 +69,19 @@ APA (American Psychological Association)
 
 *@
 
-<EditForm Model="FormModel">
+@switch (Mode)
+{
+    case Mode.Manual:
+        <Basic ShowHelpText="@ShowHelpText" />
+        break;
 
-    <section style="padding: 1em 0; inset: 1em 0;">
-    <strong>1) Kuka</strong> – kirjoittaja tai suullinen tietolähde – aina henkilö, järjestyksessä sukunimi, etunimen alkukirjain. Ellei henkilötekijää ole, ensimmäiseksi tiedoksi siirtyy listan 3. kohta ”Mitä<strong> – </strong> lähteen nimi tai otsikko”.
+    case Mode.Automated:
+        <h1>This mode is not yet supported.</h1>
+        <Automated />
+        break;
 
-    <div class="form-check">
-        <label class="form-check-label" for="release-known">Tekijä tunnettu?</label>
-        <input class="release-known" type="checkbox" @bind-value="AuthorKnown" id="release-known">
-    </div>
+    default:
+    <p>An unexpected error occured. Please try again or contact administration.</p>
+        break;
 
-    <div class="mb-3">
-        <label for="link" class="form-label">Linkin verkko-osoite.</label>
-        <input type="text" class="form-control" id="link" placeholder="Syötä linkki työhön." @bind-value="FormModel.Link">
-    </div>
-
-    @* TOOD: Handle multiple authors *@
-    @for (int i = 0; i < 1; i++)
-    {
-        <div class="row">
-            <div class="col">
-                <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
-                <input type="text" class="form-control" id="author" placeholder="Etunimi" aria-label="Etunimi" @bind-value="FormModel.AuthorInitial">
-            </div>
-            <div class="col">
-                <label for="author" class="form-label">Henkilötekijä (jollei ole tiedossa, aloitetaan julkaisun nimellä, ei julkaisijan nimellä).</label>
-                <input type="text" class="form-control" id="author-lastname" placeholder="Sukunimi" aria-label="Etunimi" @bind-value="FormModel.AuthorLastName">
-            </div>
-        </div>
-    }
-    </section>
-
-    <section>
-    <strong>2) Milloin</strong> – julkaisuvuosi (ellei tiedossa, käytetään lyhennettä N.d. = no date, tekstiviitteessä n.d. Lähdeluettelossa on iso N, koska se on pisteen jäljessä, tekstviiitteessä on pieni n.
-
-    <div class="form-check">
-        <label class="form-check-label" for="release-known">Julkaisu päivä tunnettu?</label>
-        <input class="release-known" type="checkbox" checked="@ReleaseKnown" id="release-known" @oninput="@(() => FormModel.ReleaseYear = ReleaseKnown ? 0 : null)">
-    </div>
-
-    <div class="mb-3">
-        <label for="release-date" class="form-label">Julkaisuaika vuosilukuna.</label>
-        <input type="number" class="form-control" id="release-date" placeholder="@(ReleaseKnown ? "Syötä julkaisu vuosi." : "N.d.")" @bind-value="FormModel.ReleaseYear" disabled="@ReleaseKnown">
-    </div>
-
-    </section>
-    <section>
-
-    <strong>3) Mitä</strong>
-
-    <div class="mb-3">
-        <label for="title" class="form-label">Teoksen nimi tai otsikko.</label>
-        <input type="text" class="form-control" id="title" placeholder="Syötä teoksen nimi tai otsikko." @bind-value="FormModel.Title">
-    </div>
-
-    </section>
-    <section>
-
-    <strong>4) Missä</strong> – tiedot julkaisusta, painoksesta, julkaisupaikasta ja kustantajasta, verkko-osoitteesta jne.<br>
-    – Teoksen painos merkitään vain, jos se on muu kuin ensimmäinen. Painostiedot voi haluttaessa lyhentää, esimerkiksi p. (painos), uud. p. (uudistettu painos) tai korj. p. (korjattu painos).<br>
-    – Kustantajan tietoihin ei yleensä lisätä yhtiömuotoa (oy., ry., ky.), poikkeuksena WSOY.<br>
-    – Tarvittaessa ilmoitetaan myös täsmällinen julkaisu- tai päivitysaika, esimerkiksi lehden tai radio-ohjelman julkaisupäivämäärä. Viittauspäivämäärä verkkojulkaisuihin ilmoitetaan aina.
-
-
-    <div class="mb-3">
-        <label for="type" class="form-label">Teoksen painos.</label>
-        <input type="text" class="form-control" id="type" placeholder="Syötä teoksen tyyppi." @bind-value="FormModel.PublishEdition">
-    </div>
-
-    <div class="mb-3">
-        <label for="type" class="form-label">Kustantaja.</label>
-        <input type="text" class="form-control" id="type" placeholder="Syötä teoksen tyyppi." @bind-value="FormModel.Publisher">
-    </div>
-
-    <div class="mb-3">
-        <label for="type" class="form-label">Tiedot julkaisutyypistä (opinnäytetyö, pöytäkirja, jne.).</label>
-        <select class="form-select" aria-label="source type" @bind:value="@FormModel.Type">
-            @if (FormModel.Type == SourceType.Unknown)
-            {
-                <option selected>Valitse teoksen tyyppi</option>
-            }
-            <option value="@SourceType.Test">Opinnäytetyö</option>
-            <option value="@SourceType.Test">Opinnäytetyö</option>
-            <option value="@SourceType.Test">Pöytäkirja</option>
-            <option value="@SourceType.Test">Sähköpostiviesti</option>
-            <option value="@SourceType.Test">CD -tai DVD-levy</option>
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="other-info" class="form-label">Muut julkaisua koskevat tiedot, mm. viestimen tyyppi (esimerkiksi sähköpostiviesti, CD-levy, DVD), toimittajat, painostiedot , sivunumerot jne.</label>
-        <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot." @bind-value="FormModel.OtherInfo">
-    </div>
-
-    <div class="mb-3">
-        <label for="publisher" class="form-label">Julkaisija / kustantaja tai muu julkaisijataho.</label>
-        <input type="text" class="form-control" id="publisher" placeholder="Syötä julkaisija." @bind-value="FormModel.Publisher">
-    </div>
-
-    <div class="mb-3">
-        <label for="other" class="form-label">Mahdolliset muut täsmentävät tiedot:</label>
-        <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot." @bind-value="FormModel.Other">
-    </div>
-
-    <div class="mb-3">
-        <label for="date-referred" class="form-label">Viittaamisen ajankohta päivämääränä.</label>
-        <input type="text" class="form-control" id="other" placeholder="Syötä viittaamisen ajankohta." @bind-value="FormModel.DateReferred">
-    </div>
-
-    <div class="mb-3">
-        <label for="source" class="form-label">Lähde:</label>
-        <textarea class="form-control" id="source" rows="3" readonly>@Source</textarea>
-    </div>
-
-    </section>
-
-    <button type="submit" class="btn btn-primary mb-3">Valmis</button>
-
-</EditForm>
-
-@code {
-    Model FormModel { get; set; } = new Model();
-
-    public string Source { get; set; }
-
-    private bool ReleaseKnown { get; set; } = false;
-    private bool AuthorKnown { get; set; } = true;
-
-    public class Model
-    {
-        public string AuthorInitial { get; set; }
-        public string AuthorLastName { get; set; }
-
-        public int? ReleaseYear { get; set; }
-        public string Title { get; set; }
-        public SourceType Type { get; set; }
-        public string OtherInfo { get; set; }
-        public string Publisher { get; set; }
-        public string Other { get; set; }
-        public DateOnly DateReferred { get; set; }
-        public string Link { get; set; }
-        public string PublishEdition { get; set; }
-
-    }
-
-    public enum SourceType
-    {
-        Unknown,
-        Test
-    }
 }

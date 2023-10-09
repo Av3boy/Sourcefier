@@ -1,0 +1,26 @@
+﻿
+<div class="row">
+    <div class="col">
+        <label for="link" class="form-label">Linkki.</label>
+        <input type="text" class="form-control" id="other" placeholder="https://en.wikipedia.org/wiki/Pingu" @bind-value="Link">
+    </div>
+
+    <div class="col submit-btn">
+        <button type="submit" class="btn btn-primary mb-3" @onclick="CreateSource">Valmis</button>
+    </div>
+</div>
+
+
+<InputTextArea class="source" @bind-Value="@Source" />
+
+@code {
+
+    private string Link { get; set; } = string.Empty;
+
+    private string Source { get; set; } = string.Empty;
+
+    private void CreateSource()
+    {
+        Source = string.Empty;
+    }
+}
