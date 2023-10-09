@@ -8,6 +8,13 @@ Input a link to output a source element.
 
 NOTE: Unfortunately, not all developers add the information to their sites we require. 
 
+## Contributing
+If you wish to contribute to the project, please create a feature branch. For this functionality you write, create an issue (if not open already) and assign yourself. Now take the id of the issue as the starting name of the branch.
+Example:
+1234-fix-typo
+
+Once your fix is complete. Please create a pull request to the main branch.
+
 ## Detecting the parts of the source
 
 **NOTE: Not all sites contain all the required information, such as the author or the release date so remember to check the output source validity.**
