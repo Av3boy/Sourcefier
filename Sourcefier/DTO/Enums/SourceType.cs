@@ -7,5 +7,10 @@ public enum SourceType
     Book,
     Record,
     Email,
-    CDOrDvd
+    WebPublication,
+    Legislation,
+    ScientificArticle,
+    Publication,
+    Article,
+    Movie,
 }

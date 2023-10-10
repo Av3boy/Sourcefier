@@ -1,4 +1,5 @@
 ﻿using Sourcefier.DTO.Enums;
+using Sourcefier.ValidationAttributes;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,8 +15,11 @@ public class Model
     [Required]
     public string Title { get; set; } = string.Empty;
 
-    [Required]
+    [ConditionalValidation<SourceType>(expectedValue: SourceType.Unknown)]
     public SourceType Type { get; set; } = SourceType.Unknown;
+
+    public BookModel Book { get; set; } = new BookModel();
+
     public string OtherInfo { get; set; } = string.Empty;
     public string Publisher { get; set; } = string.Empty;
     public string Other { get; set; } = string.Empty;
