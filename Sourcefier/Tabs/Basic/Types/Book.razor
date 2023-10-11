@@ -1,0 +1,40 @@
+﻿<div class="mb-3">
+    <label for="type" class="form-label">Teoksen painos:</label>
+    <input type="text" class="form-control" id="type" placeholder="Syötä teoksen painos..." @bind-value="FormModel.PublishEdition">
+
+    <ValidationMessage For="(() => FormModel.PublishEdition)" />
+</div>
+
+<div>
+    <label class="form-label">Julkaisun painoksen tyyppi</label>
+    <InputRadioGroup @bind-Value="@FormModel.Book.PublishEditionType">
+
+        <div class="input-mode">
+            <label>Uudistettu:</label>
+            <InputRadio Value="@PublishEditionType.Revised" />
+        </div>
+
+        <div class="input-mode">
+            <label>Korjattu:</label>
+            <InputRadio Value="@PublishEditionType.Corrected" />
+        </div>
+    </InputRadioGroup>
+</div>
+
+<div class="mb-3">
+    <label for="other-info" class="form-label">Sivu numero:</label>
+    <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot..." @bind-value="FormModel.OtherInfo">
+
+    <ValidationMessage For="(() => FormModel.OtherInfo)" />
+</div>
+
+<div class="mb-3">
+    <label for="publisher" class="form-label">Kustantaja tai muu julkaisijataho:</label>
+    <input type="text" class="form-control" id="publisher" placeholder="Syötä julkaisija..." @bind-value="FormModel.Publisher">
+
+    <ValidationMessage For="(() => FormModel.Publisher)" />
+</div>
+
+@code {
+
+}

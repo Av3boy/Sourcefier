@@ -6,7 +6,7 @@
     </div>
     <div class="col">
         <label for="author" class="form-label">@_authorLastnameLabel</label>
-        <InputText Value="@_author?.LastName" ValueChanged="@((string lastname) => OnLastnameChanged(lastname))" ValueExpression="(() => _author.LastName)"
+        <InputText Value="@_author.LastName" ValueChanged="@((string lastname) => OnLastnameChanged(lastname))" ValueExpression="(() => _author!.LastName)"
                    class="form-control" id="author-lastname" placeholder="@_authorLastnamePlaceholder" aria-label="Sukunimi" />
     </div>
     <div class="col delete-btn">
@@ -40,8 +40,6 @@
     [Parameter]
     public Mode Mode { get; set; } = Mode.Manual;
 
-    private bool _authorCreated = false;
-
     private async Task OnRemoveAuthorClicked()
         => await RemoveAuthor.InvokeAsync();
 
@@ -62,7 +60,6 @@
     private async Task AuthorCreated()
     {
         await OnAuthorCreated.InvokeAsync(_author);
-        _authorCreated = true;
     }
 
     protected override async Task OnInitializedAsync()

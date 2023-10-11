@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
-
 using Sourcefier.Components;
 using Sourcefier.DTO;
 using Sourcefier.DTO.Enums;
+using Sourcefier.DTO.Models;
 using Sourcefier.Extensions;
-
 using System.Text;
 
-namespace Sourcefier.Tabs;
+namespace Sourcefier.Tabs.Basic;
 
 public partial class Basic
 {
@@ -16,14 +15,23 @@ public partial class Basic
 
     Model FormModel { get; set; } = new Model();
 
+    ISourceModel Model;
+
     public string Source { get; set; } = string.Empty;
 
     private int numAuthors { get; set; }
 
     private bool ReleaseKnown { get; set; } = true;
 
+    private bool NoAuthors { get; set; } = false;
 
-    private async Task AddAuthor()
+    protected void TypeChanged(SourceType? type)
+    {
+        FormModel.Type = type;
+        NoAuthors = FormModel.Type.Value.HasFlag(SourceType.Legislation);
+    }
+
+    private void AddAuthor()
     {
         numAuthors += 1;
     }
@@ -101,9 +109,6 @@ public partial class Basic
                 break;
 
             case SourceType.Email:
-                break;
-
-            case SourceType.CDOrDvd:
                 break;
 
             case SourceType.Unknown:

@@ -1,5 +1,6 @@
 ﻿namespace Sourcefier.DTO.Enums;
 
+[Flags]
 public enum SourceType
 {
     Unknown,
@@ -10,7 +11,7 @@ public enum SourceType
     WebPublication,
     Legislation,
     ScientificArticle,
-    Publication,
     Article,
+    Publication,
     Movie,
 }
