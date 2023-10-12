@@ -1,0 +1,31 @@
+﻿<div class="mb-3">
+    <label for="other" class="form-label">Lehti:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä lehti..." @bind-value="Model.Paper">
+
+    <ValidationMessage For="(() => Model.Paper)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Vuosikerta:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä vuosikerta..." @bind-value="Model.VolumeNumber">
+
+    <ValidationMessage For="(() => Model.VolumeNumber)" />
+</div>
+
+
+<div class="mb-3">
+    <label for="other" class="form-label">Sivut:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä lähde sivut..." @bind-value="Model.PageNumber">
+
+    <ValidationMessage For="(() => Model.PageNumber)" />
+</div>
+
+@* TODO: Are these the same for scientific and normal articles? *@
+
+@code {
+    [CascadingParameter]
+    public ArticleModel Model { get; set; } = new ArticleModel();
+
+    [Parameter]
+    public bool IsScientific { get; set; } = false;
+}

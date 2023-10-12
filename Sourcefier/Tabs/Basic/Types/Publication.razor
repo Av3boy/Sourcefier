@@ -1,0 +1,24 @@
+﻿@inherits TypeBase<PublicationModel>
+
+@* Optional *@
+<div class="mb-3">
+    <label for="other" class="form-label">Toimittajat:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="Model.Reporter">
+
+    <ValidationMessage For="(() => Model.Reporter)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Julkaisuvuosi:</label>
+    <input type="number" class="form-control" id="release-date" placeholder="Syötä julkaisuvuosi..." @bind-value="Model.YearPublished" />
+
+    <ValidationMessage For="(() => Model.YearPublished)" />
+</div>
+
+@* Optional *@
+<div class="mb-3">
+    <label for="other" class="form-label">Julkaisu numero:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä julkaisu numero..." @bind-value="Model.ReleaseNumber">
+
+    <ValidationMessage For="(() => Model.ReleaseNumber)" />
+</div>

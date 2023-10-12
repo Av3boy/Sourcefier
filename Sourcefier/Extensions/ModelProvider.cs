@@ -5,7 +5,7 @@ namespace Sourcefier.Extensions;
 
 public static class ModelProvider
 {
-    public static Model GetModel(this SourceType type)
+    public static SourceModel GetModel(this SourceType type)
         => type switch
         {
             SourceType.Unknown => new UnknownModel(),
@@ -15,7 +15,6 @@ public static class ModelProvider
             SourceType.Email => new EmailModel(),
             SourceType.WebPublication => new WebPublicationModel(),
             SourceType.Legislation => new LegislationModel(),
-            SourceType.ScientificArticle => new ScientificArticleModel(),
             SourceType.Article => new ArticleModel(),
             SourceType.Publication => new PublicationModel(),
             SourceType.Movie => new MovieModel(),

@@ -1,0 +1,38 @@
+﻿@inherits TypeBase<RecordModel>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Formaatti:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä formaatti..." @bind-value="Model.Format">
+
+    <ValidationMessage For="(() => Model.Format)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Kuvaus:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä kuvaus..." @bind-value="Model.Description">
+
+    <ValidationMessage For="(() => Model.Description)" />
+</div>
+
+<div>
+    <label class="form-label">Location type</label>
+    <InputRadioGroup @bind-Value="@Model.LocationType">
+
+        <div class="input-mode">
+            <label>Digitaalinen:</label>
+            <InputRadio Value="@LocationType.Digital" />
+        </div>
+
+        <div class="input-mode">
+            <label>Fyysinen:</label>
+            <InputRadio Value="@LocationType.Physical" />
+        </div>
+    </InputRadioGroup>
+</div>
+
+<div class="mb-3">
+    <label for="date-referred" class="form-label">Access date:</label>
+    <InputDate class="form-control" @bind-Value="Model.DateAccessed" />
+
+    <ValidationMessage For="(() => Model.DateAccessed)" />
+</div>

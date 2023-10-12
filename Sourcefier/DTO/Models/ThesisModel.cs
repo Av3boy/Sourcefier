@@ -1,8 +1,8 @@
 ﻿namespace Sourcefier.DTO.Models;
 
-public class ThesisModel : Model
+public class ThesisModel : SourceModel
 {
-    public string School { get; set; }
-    public bool ReleaseKnown { get; set; }
-
+    public string? School { get; set; }
+    public bool IsFaculty { get; set; }
+    public string? Faculty { get; set; }
 }

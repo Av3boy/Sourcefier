@@ -1,0 +1,34 @@
+﻿@inherits TypeBase<EmailModel>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Vastaanottajan nimi:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="Model.Receiver">
+
+    <ValidationMessage For="(() => Model.Receiver)" />
+</div>
+
+<div class="mb-3">
+    <label for="date-referred" class="form-label">Lähetyspäivämäärä:</label>
+    <InputDate class="form-control" @bind-Value="Model.DateSent" />
+
+    <ValidationMessage For="(() => Model.DateSent)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Sähköpostin aihe:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="Model.Subject">
+
+    <ValidationMessage For="(() => Model.Subject)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Viestin sisältö:</label>
+    <InputTextArea class="source" @bind-Value="@Model.Contents" />
+    <ValidationMessage For="(() => Model.Contents)" />
+</div>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Aiheeseen liittyvät tiedot:</label>
+    <InputTextArea class="source" @bind-Value="@Model.MoreInfo" />
+    <ValidationMessage For="(() => Model.MoreInfo)" />
+</div>

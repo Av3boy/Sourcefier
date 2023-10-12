@@ -1,0 +1,15 @@
+﻿@inherits TypeBase<WebPublicationModel>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Verkkosivun nimi:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="Model.WebsiteName">
+
+    <ValidationMessage For="(() => Model.WebsiteName)" />
+</div>
+
+<div class="mb-3">
+    <label for="date-referred" class="form-label">Julkaisupäivä:</label>
+    <InputDate class="form-control" @bind-Value="Model.ReleaseDate" />
+
+    <ValidationMessage For="(() => Model.ReleaseDate)" />
+</div>

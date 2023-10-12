@@ -5,12 +5,12 @@ namespace Sourcefier.DTO.Models;
 
 public interface ISourceModel
 {
-    ObservableRangeCollection<AuthorDto> Authors { get; set; }
-    DateOnly DateReferred { get; set; }
-    string Link { get; set; }
-    string OtherInfo { get; set; }
-    string Title { get; set; }
-    SourceType? Type { get; set; }
+    public ObservableRangeCollection<AuthorDto> Authors { get; set; }
+    public DateOnly DateReferred { get; set; }
+    public string Link { get; set; }
+    public string OtherInfo { get; set; }
+    public string Title { get; set; }
+    public SourceType Type { get; set; }
 
     public int? ReleaseYear { get; set; }
 }

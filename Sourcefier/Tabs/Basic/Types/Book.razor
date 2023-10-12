@@ -1,13 +1,15 @@
-﻿<div class="mb-3">
-    <label for="type" class="form-label">Teoksen painos:</label>
-    <input type="text" class="form-control" id="type" placeholder="Syötä teoksen painos..." @bind-value="FormModel.PublishEdition">
+﻿@inherits TypeBase<BookModel>
 
-    <ValidationMessage For="(() => FormModel.PublishEdition)" />
+<div class="mb-3">
+    <label for="type" class="form-label">Teoksen painos:</label>
+    <input type="text" class="form-control" id="type" placeholder="Syötä teoksen painos..." @bind-value="Model.PublishEdition">
+
+    <ValidationMessage For="(() => Model.PublishEdition)" />
 </div>
 
 <div>
     <label class="form-label">Julkaisun painoksen tyyppi</label>
-    <InputRadioGroup @bind-Value="@FormModel.Book.PublishEditionType">
+    <InputRadioGroup @bind-Value="@Model.PublishEditionType">
 
         <div class="input-mode">
             <label>Uudistettu:</label>
@@ -23,18 +25,14 @@
 
 <div class="mb-3">
     <label for="other-info" class="form-label">Sivu numero:</label>
-    <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot..." @bind-value="FormModel.OtherInfo">
+    <input type="text" class="form-control" id="other-info" placeholder="Syötä muut tiedot..." @bind-value="Model.OtherInfo">
 
-    <ValidationMessage For="(() => FormModel.OtherInfo)" />
+    <ValidationMessage For="(() => Model.OtherInfo)" />
 </div>
 
 <div class="mb-3">
     <label for="publisher" class="form-label">Kustantaja tai muu julkaisijataho:</label>
-    <input type="text" class="form-control" id="publisher" placeholder="Syötä julkaisija..." @bind-value="FormModel.Publisher">
+    <input type="text" class="form-control" id="publisher" placeholder="Syötä julkaisija..." @bind-value="Model.Publisher">
 
-    <ValidationMessage For="(() => FormModel.Publisher)" />
+    <ValidationMessage For="(() => Model.Publisher)" />
 </div>
-
-@code {
-
-}

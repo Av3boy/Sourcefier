@@ -2,16 +2,14 @@
 
 namespace Sourcefier.DTO.Models;
 
-public class BookModel : Model
+public class BookModel : SourceModel
 {
     public int? PageStartNumber { get; set; }
     public int? PageEndNumber { get; set; }
     public PublishEditionType PublishEditionType { get; set; } = PublishEditionType.Basic;
 
     public bool IsEBook { get; set; } = false;
-    string PublishEdition { get; set; }
-
-    string Publisher { get; set; }
-    int? ReleaseYear { get; set; }
-
+    public string? PublishEdition { get; set; }
+    public string? Publisher { get; set; }
+    public int? YearPublished { get; set; }
 }

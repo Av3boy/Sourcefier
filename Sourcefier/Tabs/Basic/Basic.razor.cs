@@ -8,37 +8,36 @@ using System.Text;
 
 namespace Sourcefier.Tabs.Basic;
 
-public partial class Basic
+public partial class Basic : ComponentBase
 {
     [Parameter]
     public bool ShowHelpText { get; set; }
 
-    Model FormModel { get; set; } = new Model();
-
-    ISourceModel Model;
+    SourceModel FormModel { get; set; } = new SourceModel();
 
     public string Source { get; set; } = string.Empty;
 
-    private int numAuthors { get; set; }
+    private int NumAuthors { get; set; }
 
     private bool ReleaseKnown { get; set; } = true;
 
     private bool NoAuthors { get; set; } = false;
 
-    protected void TypeChanged(SourceType? type)
+    protected void TypeChanged(SourceType type)
     {
+        FormModel = ModelProvider.GetModel(type);
         FormModel.Type = type;
-        NoAuthors = FormModel.Type.Value.HasFlag(SourceType.Legislation);
+        NoAuthors = FormModel.Type.HasFlag(SourceType.Legislation);
     }
 
     private void AddAuthor()
     {
-        numAuthors += 1;
+        NumAuthors += 1;
     }
 
     private void RemoveAuthor(int index)
     {
-        numAuthors -= 1;
+        NumAuthors -= 1;
         FormModel.Authors.RemoveAt(index);
     }
 
@@ -47,7 +46,8 @@ public partial class Basic
         bool releaseKnown = (bool)e.Value!;
         ReleaseKnown = releaseKnown;
 
-        if (releaseKnown)
+        // Release not kwown, use N.d. ("No date")
+        if (!releaseKnown)
             FormModel.ReleaseYear = null;
     }
 
@@ -56,7 +56,7 @@ public partial class Basic
         StringBuilder sourceBuilder = new StringBuilder();
 
         // Step 1: Who
-        if (numAuthors > 0)
+        if (NumAuthors > 0)
         {
             string authors = GetAuthorsString();
             sourceBuilder.Append(authors);
@@ -72,52 +72,66 @@ public partial class Basic
         sourceBuilder.Append($"{FormModel.Title}. ");
 
         // Step 4: Where
-        string sourceType = GetSourceType();
-        sourceBuilder.Append(sourceType);
+        // Add other fields based on the type of the model
+        string typeInfo = HandleTypeInfo();
+        sourceBuilder.Append(typeInfo);
 
-        // TODO: Add other fields
-        /*
-            sourceBuilder.Append("painos");
-            sourceBuilder.Append("kustantaja");
-            sourceBuilder.Append("julkaisutyyppi");
-            sourceBuilder.Append("muut tiedot");
-            sourceBuilder.Append("julkaisija");
-            sourceBuilder.Append("täsmentävät tiedot");
-        */
-
-
+        // Add the referral date. This is required for all types.
         sourceBuilder.Append($"Viitattu: {FormModel.DateReferred}. ");
+
+        // Lastly, if the type requires a link, add it.
         sourceBuilder.AppendLine(LinkSourceText);
 
         Source = sourceBuilder.ToString();
     }
 
+    private string HandleTypeInfo()
+    {
+        Func<string> handler = FormModel.Type switch
+        {
+            SourceType.Unknown => HandleUnknownType,
+            SourceType.Book => HandleBookType,
+            SourceType.Movie => HandleMovieType,
+            SourceType.Publication => HandlePublicationType,
+            SourceType.Thesis => HandleThesisType,
+            SourceType.Legislation => HandleLegislationType,
+            SourceType.Article => HandleArticleType,
+            SourceType.Record => HandleRecordType,
+            SourceType.WebPublication => HandleWebPublicationType,
+            _ => throw new InvalidOperationException("Invalid type."),
+        };
+
+        return handler.Invoke();
+    }
+
+    private string HandleUnknownType()
+        => throw new NotImplementedException();
+
+    private string HandleBookType()
+        => throw new NotImplementedException();
+
+    private string HandleMovieType()
+        => throw new NotImplementedException();
+
+    private string HandlePublicationType()
+        => throw new NotImplementedException();
+
+    private string HandleThesisType()
+        => throw new NotImplementedException();
+
+    private string HandleLegislationType()
+        => throw new NotImplementedException();
+
+    private string HandleArticleType()
+        => throw new NotImplementedException();
+    private string HandleRecordType()
+        => throw new NotImplementedException();
+
+    private string HandleWebPublicationType()
+        => throw new NotImplementedException();
+
     private string LinkSourceText
         => $"{FormModel.Link}.";
-
-    private string GetSourceType()
-    {
-        switch (FormModel.Type)
-        {
-            case SourceType.Thesis:
-                break;
-
-            case SourceType.Book:
-                break;
-
-            case SourceType.Record:
-                break;
-
-            case SourceType.Email:
-                break;
-
-            case SourceType.Unknown:
-            default:
-                break;
-        }
-
-        return string.Empty;
-    }
 
     private string GetAuthorsString()
     {

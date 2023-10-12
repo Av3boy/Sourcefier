@@ -1,5 +1,5 @@
 ﻿namespace Sourcefier.DTO.Models;
 
-public class UnknownModel : Model
+public class UnknownModel : SourceModel
 {
 }

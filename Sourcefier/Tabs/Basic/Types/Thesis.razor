@@ -1,22 +1,20 @@
-﻿<div class="mb-3">
-    <label for="other-info" class="form-label">Työn julkaissut oppilaitos:</label>
-    <input type="text" class="form-control" id="other-info" placeholder="Syötä koulu, joka julkaisi opinnäytetyön..." @bind-value="FormModel.School">
+﻿@inherits TypeBase<ThesisModel>
 
-    <ValidationMessage For="(() => FormModel.School)" />
+<div class="mb-3">
+    <label for="other-info" class="form-label">Työn julkaissut oppilaitos:</label>
+    <input type="text" class="form-control" id="other-info" placeholder="Syötä koulu, joka julkaisi opinnäytetyön..." @bind-value="Model.School">
+
+    <ValidationMessage For="(() => Model.School)" />
 </div>
 
 <div class="form-check">
     <label class="form-check-label" for="release-known">Tiedekunta?</label>
-    <input class="form-check-input" type="checkbox" checked="@FormModel.ReleaseKnown" id="release-known" @oninput="@OnReleaseKnownChanged">
+    <input class="form-check-input" type="checkbox" checked="@Model.IsFaculty" id="release-known" @bind-value="@Model.IsFaculty">
 </div>
 
 <div class="mb-3">
     <label for="other-info" class="form-label">Tiedekunta:</label>
-    <input type="text" class="form-control" id="other-info" placeholder="Syötä koulu, joka julkaisi opinnäytetyön..." @bind-value="FormModel.School">
+    <input type="text" class="form-control" id="other-info" placeholder="Syötä koulu, joka julkaisi opinnäytetyön..." @bind-value="Model.Faculty">
 
-    <ValidationMessage For="(() => FormModel.School)" />
+    <ValidationMessage For="(() => Model.Faculty)" />
 </div>
-
-@code {
-    ThesisModel FormModel { get; set; }
-}

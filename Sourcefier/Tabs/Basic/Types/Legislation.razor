@@ -1,0 +1,45 @@
+﻿@inherits TypeBase<LegislationModel>
+
+<div class="mb-3">
+    <label for="other" class="form-label">Lain tai säädännön numero ja nimi:</label>
+    <input type="text" class="form-control" id="other" placeholder="Syötä lain tai säädännön numero ja nimi..." @bind-value="Model.LawNumber">
+
+    <ValidationMessage For="(() => Model.LawNumber)" />
+</div>
+
+@if (IsLaw)
+{
+    <div class="mb-3">
+        <label for="date-referred" class="form-label">Annettu päivä:</label>
+        <InputDate class="form-control" @bind-Value="Model.DateIssued" />
+
+        <ValidationMessage For="(() => Model.DateIssued)" />
+    </div>
+}
+
+<div class="form-check">
+    <label class="form-check-label" for="release-known">Muutettu julkaisun jälkeen?</label>
+    <input class="form-check-input" type="checkbox" checked="@Model.ChangedAfterIssue" id="release-known" @bind-value="@Model.ChangedAfterIssue">
+</div>
+
+@if (Model.ChangedAfterIssue)
+{
+    <div class="mb-3">
+        <label for="date-referred" class="form-label">Viimeisin muutos:</label>
+        <InputDate class="form-control" @bind-Value="Model.DateLastChanged" />
+
+        <ValidationMessage For="(() => Model.DateLastChanged)" />
+    </div>
+}
+
+@code {
+
+    /// <summary>
+    ///     Determines whether the source is a law or a regulation.
+    /// </summary>
+    /// <remarks>
+    ///     Determines whether date issued should be specified.
+    /// </remarks>
+    [Parameter]
+    public bool IsLaw { get; set; }
+}

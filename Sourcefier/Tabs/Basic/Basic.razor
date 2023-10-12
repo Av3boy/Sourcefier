@@ -1,14 +1,16 @@
-﻿<div class="mb-3">
+﻿@using Sourcefier.Tabs.Basic.Types
+
+<div class="mb-3">
     <label for="type" class="form-label">Lähteen tyyppi:</label>
-    <InputSelect class="form-select" placeholder="Valitse lähteen tyyppi.." aria-label="source type" ValueChanged="@((SourceType? sourceType) => TypeChanged(sourceType))" Value="FormModel.Type" ValueExpression="@(() => FormModel.Type)">
+    <InputSelect class="form-select" placeholder="Valitse lähteen tyyppi.." aria-label="source type" ValueChanged="@((SourceType sourceType) => TypeChanged(sourceType))" Value="FormModel.Type" ValueExpression="@(() => FormModel.Type)">
         <option value="@SourceType.Unknown">..</option>
         <option value="@SourceType.Thesis">Opinnäytetyö / Tutkielma</option>
         <option value="@SourceType.Book">Kirja</option>
         <option value="@SourceType.Record">Aineisto</option>
         <option value="@SourceType.Email">Sähköpostiviesti</option>
-        <option value="@SourceType.WebPublication">Verkkojulkaisu / Artikkeli</option>
+        <option value="@SourceType.WebPublication">Verkkojulkaisu</option>
         <option value="@SourceType.Legislation">Lainsäädäntö / Laki</option>
-        <option value="@SourceType.ScientificArticle">Tieteellinen artikkeli</option>
+        <option value="@SourceType.Article">Artikkeli</option>
         <option value="@SourceType.Publication">Julkaisu</option>
         <option value="@SourceType.Movie">Elokuva</option>
     </InputSelect>
@@ -22,7 +24,7 @@
     @* If type does not have any authors, hide step 1 & 2. *@
     @if (FormModel.Type != SourceType.Legislation)
     {
-        <Collapsible ContentMaxHeight="@(100 + (numAuthors * 100))">
+        <Collapsible ContentMaxHeight="@(100 + (NumAuthors * 100))">
             <Title>
                 <strong>1) Kuka</strong>
                 @if (ShowHelpText)
@@ -52,14 +54,14 @@
 
                 <button type="button" class="btn btn-light" @onclick="@AddAuthor"><i class="fa-solid fa-plus"></i> Lisää tekijä</button>
 
-                @for (int i = 0; i < numAuthors; i++)
+                @for (int i = 0; i < NumAuthors; i++)
                 {
                     <AuthorCard OnAuthorChanged="@((AuthorDto author) => AuthorChanged(author))"
                                 OnAuthorCreated="@((AuthorDto author) => FormModel.Authors.Add(author))"
                                 RemoveAuthor="@(() => RemoveAuthor(i))" Num="@(i + 1)" />
                 }
 
-                @if (numAuthors == 0)
+                @if (NumAuthors == 0)
                 {
                     <p class="text-muted">Ei tekijöitä.</p>
                 }
@@ -92,7 +94,6 @@
                 </div>
             </Content>
         </Collapsible>
-
     }
 
     <Collapsible ContentMaxHeight="200">
@@ -131,219 +132,53 @@
 
             *@
 
-            @if (FormModel.Type == SourceType.Thesis)
+            @switch (FormModel.Type)
             {
-                <Sourcefier.Tabs.Basic.Types.Thesis />
-            }
+                case SourceType.Thesis:
+                    <Thesis />
+                    break;
 
-            @if (FormModel.Type == SourceType.Book)
-            {
-                
-            }
+                case SourceType.Book:
+                    <Book />
+                    break;
 
-            @if (FormModel.Type == SourceType.Legislation)
-            {
-                <div class="mb-3">
-                    <label for="other" class="form-label">Lain tai säädännön numero ja nimi:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä lain tai säädännön numero ja nimi..." @bind-value="FormModel.LawNumberAndName">
+                case SourceType.Legislation:
+                    <Legislation />
+                    break;
 
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
+                case SourceType.Record:
+                    <Record />
+                    break;
 
-                @* Vain laki, ei säädäntö*@
+                case SourceType.Email:
+                    <Email />
+                    break;
 
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Annettu päivä:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
+                case SourceType.WebPublication:
+                    <WebPublication />
+                    break;
 
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
+                case SourceType.Movie:
+                    <Movie />
+                    break;
 
-                <div class="form-check">
-                    <label class="form-check-label" for="release-known">Muutettu julkaisun jälkeen?</label>
-                    <input class="form-check-input" type="checkbox" checked="@ReleaseKnown" id="release-known" @oninput="@OnReleaseKnownChanged">
-                </div>
+                case SourceType.Publication:
+                    <Publication />
+                    break;
 
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Viimeisin muutos:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
+                case SourceType.Article:
+                    <Article />
+                    break;
 
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
-            }
-
-            @if (FormModel.Type == SourceType.Record)
-            {
-                <div class="mb-3">
-                    <label for="other" class="form-label">Formaatti:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Kuvaus:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div>
-                    <label class="form-label">Location type</label>
-                    <InputRadioGroup @bind-Value="@FormModel.Book.PublishEditionType">
-
-                        <div class="input-mode">
-                            <label>Digitaalinen:</label>
-                            <InputRadio Value="@PublishEditionType.Revised" />
-                        </div>
-
-                        <div class="input-mode">
-                            <label>Fyysinen:</label>
-                            <InputRadio Value="@PublishEditionType.Corrected" />
-                        </div>
-                    </InputRadioGroup>
-                </div>
-
-                @*TODO: Translate*@
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Access data:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
-
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
-            }
-
-            @if (FormModel.Type == SourceType.Email)
-            {
-                <div class="mb-3">
-                    <label for="other" class="form-label">Vastaanottajan nimi:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Lähetyspäivämäärä:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
-
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Sähköpostin aihe:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Viestin sisältö:</label>
-                    <InputTextArea class="source" @bind-Value="@Source" />
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Aiheeseen liittyvät tiedot:</label>
-                    <InputTextArea class="source" @bind-Value="@Source" />
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-            }
-
-            @if (FormModel.Type == SourceType.WebPublication)
-            {
-                <div class="mb-3">
-                    <label for="other" class="form-label">Verkkosivun nimi:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä verkkosivun nimi..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Julkaisupäivä:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
-
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
-            }
-
-            @if (FormModel.Type == SourceType.Movie)
-            {
-                <div class="form-check">
-                    <label class="form-check-label" for="release-known">Elokuva esitetty lähetysalustalla?</label>
-                    <input class="form-check-input" type="checkbox" checked="@ReleaseKnown" id="release-known" @oninput="@OnReleaseKnownChanged">
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Elokuvan lähetys alusta:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="date-referred" class="form-label">Lähetyksen päivämäärä:</label>
-                    <InputDate class="form-control" @bind-Value="FormModel.DateReferred" />
-
-                    <ValidationMessage For="(() => FormModel.DateReferred)" />
-                </div>
-            }
-
-            @if (FormModel.Type == SourceType.Publication)
-            {
-                @* Optional *@
-                <div class="mb-3">
-                    <label for="other" class="form-label">Toimittajat:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Julkaisuvuosi:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                @* Optional *@
-                <div class="mb-3">
-                    <label for="other" class="form-label">Julkaisu numero:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-            }
-
-            @if (FormModel.Type.HasValue && FormModel.Type.Value.HasFlag(SourceType.ScientificArticle | SourceType.Article))
-            {
-                <div class="mb-3">
-                    <label for="other" class="form-label">Lehti:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Vuosikerta:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
-
-
-                <div class="mb-3">
-                    <label for="other" class="form-label">Sivut:</label>
-                    <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
-
-                    <ValidationMessage For="(() => FormModel.Other)" />
-                </div>
+                default:
+                    break;
             }
 
             <div class="mb-3">
                 <label for="other" class="form-label">Mahdolliset muut täsmentävät tiedot:</label>
-                <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.Other">
+                <input type="text" class="form-control" id="other" placeholder="Syötä muut täsmentävät tiedot..." @bind-value="FormModel.OtherInfo">
 
-                <ValidationMessage For="(() => FormModel.Other)" />
+                <ValidationMessage For="(() => FormModel.OtherInfo)" />
             </div>
 
             @* NOTE: viittamisen ajankohta ja linkki ovat tässä järjestyksessä aina viimeiset tiedot. *@
@@ -355,8 +190,8 @@
                 <ValidationMessage For="(() => FormModel.DateReferred)" />
             </div>
 
-            @if (!FormModel.Type.HasValue || FormModel.Type.Value.HasFlag(SourceType.WebPublication | SourceType.Legislation | SourceType.ScientificArticle | SourceType.Thesis) ||
-                (FormModel.Type == SourceType.Book && FormModel.Book.IsEBook))
+            @if (FormModel.Type.HasFlag(SourceType.WebPublication | SourceType.Legislation | SourceType.Article | SourceType.Thesis) ||
+                (FormModel.Type == SourceType.Book && ((FormModel is BookModel bookModel) && bookModel.IsEBook)))
             {
                 <div class="mb-3">
                     <label for="link" class="form-label">Linkki:</label>

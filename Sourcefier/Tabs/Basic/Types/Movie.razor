@@ -1,0 +1,23 @@
+﻿@inherits TypeBase<MovieModel>
+
+<div class="form-check">
+    <label class="form-check-label" for="release-known">Elokuva esitetty lähetysalustalla?</label>
+    <input class="form-check-input" type="checkbox" checked="@Model.MovieBroadcasted" id="release-known" @bind-value="@Model.MovieBroadcasted">
+</div>
+
+@if (Model.MovieBroadcasted)
+{
+    <div class="mb-3">
+        <label for="other" class="form-label">Elokuvan lähetys alusta:</label>
+        <input type="text" class="form-control" id="other" placeholder="Syötä elokuvan lähetys alusta..." @bind-value="Model.BroadcastPlatform">
+
+        <ValidationMessage For="(() => Model.BroadcastPlatform)" />
+    </div>
+}
+
+<div class="mb-3">
+    <label for="date-referred" class="form-label">Lähetyksen päivämäärä:</label>
+    <InputDate class="form-control" @bind-Value="Model.BroadcastDate" />
+
+    <ValidationMessage For="(() => Model.BroadcastDate)" />
+</div>
