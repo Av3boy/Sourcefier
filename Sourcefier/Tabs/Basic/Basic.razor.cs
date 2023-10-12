@@ -4,7 +4,9 @@ using Sourcefier.DTO;
 using Sourcefier.DTO.Enums;
 using Sourcefier.DTO.Models;
 using Sourcefier.Extensions;
+using System.Reflection;
 using System.Text;
+using Microsoft.OpenApi.Extensions;
 
 namespace Sourcefier.Tabs.Basic;
 
@@ -85,49 +87,44 @@ public partial class Basic : ComponentBase
         Source = sourceBuilder.ToString();
     }
 
-    private string HandleTypeInfo()
+    private string HandleTypeInfo() => FormModel.Type switch
     {
-        Func<string> handler = FormModel.Type switch
-        {
-            SourceType.Unknown => HandleUnknownType,
-            SourceType.Book => HandleBookType,
-            SourceType.Movie => HandleMovieType,
-            SourceType.Publication => HandlePublicationType,
-            SourceType.Thesis => HandleThesisType,
-            SourceType.Legislation => HandleLegislationType,
-            SourceType.Article => HandleArticleType,
-            SourceType.Record => HandleRecordType,
-            SourceType.WebPublication => HandleWebPublicationType,
-            _ => throw new InvalidOperationException("Invalid type."),
-        };
+        SourceType.Unknown => HandleUnknownType((FormModel as UnknownModel)!),
+        SourceType.Book => HandleBookType((FormModel as BookModel)!),
+        SourceType.Movie => HandleMovieType((FormModel as MovieModel)!),
+        SourceType.Publication => HandlePublicationType((FormModel as PublicationModel)!),
+        SourceType.Thesis => HandleThesisType((FormModel as ThesisModel)!),
+        SourceType.Legislation => HandleLegislationType((FormModel as LegislationModel)!),
+        SourceType.Article => HandleArticleType((FormModel as ArticleModel)!),
+        SourceType.Record => HandleRecordType((FormModel as RecordModel)!),
+        SourceType.WebPublication => HandleWebPublicationType((FormModel as WebPublicationModel)!),
+        _ => throw new InvalidOperationException("Invalid type."),
+    };
 
-        return handler.Invoke();
-    }
-
-    private string HandleUnknownType()
+    private string HandleUnknownType(UnknownModel model)
         => throw new NotImplementedException();
 
-    private string HandleBookType()
+    private string HandleBookType(BookModel model)
         => throw new NotImplementedException();
 
-    private string HandleMovieType()
+    private string HandleMovieType(MovieModel model)
         => throw new NotImplementedException();
 
-    private string HandlePublicationType()
+    private string HandlePublicationType(PublicationModel model)
         => throw new NotImplementedException();
 
-    private string HandleThesisType()
+    private static string HandleThesisType(ThesisModel model)
+        => $"{model.School}, {model.Level.GetDisplayName()}. ";
+
+    private string HandleLegislationType(LegislationModel model)
         => throw new NotImplementedException();
 
-    private string HandleLegislationType()
+    private string HandleArticleType(ArticleModel model)
+        => throw new NotImplementedException();
+    private string HandleRecordType(RecordModel model)
         => throw new NotImplementedException();
 
-    private string HandleArticleType()
-        => throw new NotImplementedException();
-    private string HandleRecordType()
-        => throw new NotImplementedException();
-
-    private string HandleWebPublicationType()
+    private string HandleWebPublicationType(WebPublicationModel model)
         => throw new NotImplementedException();
 
     private string LinkSourceText
